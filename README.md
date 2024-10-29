@@ -1,2 +1,1 @@
-# godo
-a go-based todo app
+**working on it**
