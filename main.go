@@ -7,6 +7,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"github.com/twistingmercury/go-figure"
+	"os/exec"
+    "runtime"
 )
 
 type Task struct {
@@ -107,7 +110,27 @@ func loadTasksFromFile() ([]Task, error) {
 	return tasks, nil
 }
 
-func main() {
+func beforeProgramStart() {
+	fmt.Println()
+	myFigure := figure.NewFigure("godo", "banner3", true)
+	myFigure.Print()
+}
+
+func clearTerminal() {
+    var cmd *exec.Cmd
+    if runtime.GOOS == "windows" {
+        cmd = exec.Command("cmd", "/c", "cls")
+    } else {
+        cmd = exec.Command("clear")
+    }
+    cmd.Stdout = os.Stdout
+    cmd.Run()
+}
+
+func main() {        
+	clearTerminal()   
+	beforeProgramStart()
+
 	tasks, err := loadTasksFromFile()
 	if err != nil {
 		fmt.Println("Error loading tasks from file:", err)
