@@ -81,8 +81,38 @@ func saveTasksToFile(tasks []Task) {
 	fmt.Println("Tasks saved to file 'tasks.txt'.")
 }
 
+func loadTasksFromFile() ([]Task, error) {
+	file, err := os.Open("tasks.txt")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []Task{}, nil
+		}
+		return nil, err
+	}
+	defer file.Close()
+
+	var tasks []Task
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		status := line[1]
+		taskText := line[4:]
+		completed := status == 'x'
+		tasks = append(tasks, Task{text: taskText, completed: completed})
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
+
 func main() {
-	tasks := []Task{}
+	tasks, err := loadTasksFromFile()
+	if err != nil {
+		fmt.Println("Error loading tasks from file:", err)
+		tasks = []Task{}
+	}
 
 	for {
 		showMenu()
